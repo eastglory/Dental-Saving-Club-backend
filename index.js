@@ -37,24 +37,24 @@ app.use(bodyParser.json())
 //     }
 // }
 
-// const getTrayData = async (req, res) => {
-//     let data = [] ;
-//     await readXlsxFile('files/repairtray.xlsx').then((rows) => {
-//         rows.forEach((row, index) => {
-//             if(typeof row[1] == "number") data.push({
-//                 tray: row[1],
-//                 client: row[2],
-//                 recId: row[3],
-//                 notes: row[4]?row[4]:"",
-//                 receptionDate: row[5]?row[5].replace(/(..)\-(..)\-(....)/, "$2-$1-$3"):"",
-//                 location: String(row[6]).toUpperCase(),
-//                 status: String(row[7]).trim().toUpperCase(),
-//                 followUp: row[8]?row[8]:""
-//             })
-//         })
-//     })
-//     return res.send(data)
-// }
+const getTrayData = async (req, res) => {
+    let data = [] ;
+    await readXlsxFile('files/repairtray.xlsx').then((rows) => {
+        rows.forEach((row, index) => {
+            if(typeof row[1] == "number") data.push({
+                tray: row[1],
+                client: row[2],
+                recId: row[3],
+                notes: row[4]?row[4]:"",
+                receptionDate: row[5]?row[5].replace(/(..)\-(..)\-(....)/, "$2-$1-$3"):"",
+                location: String(row[6]).toUpperCase(),
+                status: String(row[7]).trim().toUpperCase(),
+                followUp: row[8]?row[8]:""
+            })
+        })
+    })
+    return res.send(data)
+}
 
 const setTrayData = async (req, res) => {
     const { tray, client, recId, notes, receptionDate, location, status, followUp} = req.body
