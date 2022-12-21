@@ -43,7 +43,7 @@ const getTrayData = async (req, res) => {
         rows.forEach((row, index) => {
             if(typeof row[1] == "number") data.push({
                 tray: row[1],
-                client: row[2],
+                client: row[2]?row[2]:"",
                 recId: row[3],
                 notes: row[4]?row[4]:"",
                 receptionDate: row[5]?row[5].replace(/(..)\-(..)\-(....)/, "$2-$1-$3"):"",
