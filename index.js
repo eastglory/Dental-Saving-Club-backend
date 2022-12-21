@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const adodb = require('node-adodb')
+// const adodb = require('node-adodb')
 const readXlsxFile = require('read-excel-file/node')
 const XlsxPopulate = require('xlsx-populate')
 
@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 //configuring database connection
-const connection = adodb.open("Provider=Microsoft.ACE.OLEDB.12.0; Data Source=C:\\\DSC\\Program\\Admin.accdb;Persist Security Info=False;", true)
+// const connection = adodb.open("Provider=Microsoft.ACE.OLEDB.12.0; Data Source=C:\\\DSC\\Program\\Admin.accdb;Persist Security Info=False;", true)
 
 const getCustomer = async (req, res) => {
     const customerId = req.query.customer
@@ -27,34 +27,34 @@ const getCustomer = async (req, res) => {
     }
 }
 
-const getPurchaseInfo = async (req, res) => {
-    const customerId = req.query.customer
-    try{
-        const purchase = await connection.query(`SELECT * from Purchase WHERE Customer=${customerId}`)
-        return res.send(purchase)
-    } catch (err) {
-        console.error(err)
-    }
-}
+// const getPurchaseInfo = async (req, res) => {
+//     const customerId = req.query.customer
+//     try{
+//         const purchase = await connection.query(`SELECT * from Purchase WHERE Customer=${customerId}`)
+//         return res.send(purchase)
+//     } catch (err) {
+//         console.error(err)
+//     }
+// }
 
-const getTrayData = async (req, res) => {
-    let data = [] ;
-    await readXlsxFile('files/repairtray.xlsx').then((rows) => {
-        rows.forEach((row, index) => {
-            if(typeof row[1] == "number") data.push({
-                tray: row[1],
-                client: row[2],
-                recId: row[3],
-                notes: row[4]?row[4]:"",
-                receptionDate: row[5]?row[5].replace(/(..)\-(..)\-(....)/, "$2-$1-$3"):"",
-                location: String(row[6]).toUpperCase(),
-                status: String(row[7]).trim().toUpperCase(),
-                followUp: row[8]?row[8]:""
-            })
-        })
-    })
-    return res.send(data)
-}
+// const getTrayData = async (req, res) => {
+//     let data = [] ;
+//     await readXlsxFile('files/repairtray.xlsx').then((rows) => {
+//         rows.forEach((row, index) => {
+//             if(typeof row[1] == "number") data.push({
+//                 tray: row[1],
+//                 client: row[2],
+//                 recId: row[3],
+//                 notes: row[4]?row[4]:"",
+//                 receptionDate: row[5]?row[5].replace(/(..)\-(..)\-(....)/, "$2-$1-$3"):"",
+//                 location: String(row[6]).toUpperCase(),
+//                 status: String(row[7]).trim().toUpperCase(),
+//                 followUp: row[8]?row[8]:""
+//             })
+//         })
+//     })
+//     return res.send(data)
+// }
 
 const setTrayData = async (req, res) => {
     const { tray, client, recId, notes, receptionDate, location, status, followUp} = req.body
