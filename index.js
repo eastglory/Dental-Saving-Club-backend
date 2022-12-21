@@ -101,7 +101,7 @@ const getAllClients = async (req, res) => {
 
 // app.get('/customer', getCustomer)
 // app.get('/purchase', getPurchaseInfo)
-// app.get('/getalltray', getTrayData)
+app.get('/getalltray', getTrayData)
 app.get('/getallclients', getAllClients)
 app.post('/settray', setTrayData)
 
