@@ -1,0 +1,32 @@
+{
+  "name": "dental-saving-club-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "adonis-adodb": "^1.0.2",
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "exceljs": "^4.3.0",
+    "express": "^4.18.2",
+    "node-adodb": "^5.0.3",
+    "nodemon": "^2.0.20",
+    "read-excel-file": "^5.5.3",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "node-fetch": "^3.3.0",
+    "write-excel-file": "^1.4.15",
+    "xlsx-populate": "^1.21.0"
+  },
+  "engins": {
+    "node": "18.x"
+  }
+}
