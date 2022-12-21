@@ -17,15 +17,15 @@ app.use(bodyParser.json())
 //configuring database connection
 // const connection = adodb.open("Provider=Microsoft.ACE.OLEDB.12.0; Data Source=C:\\\DSC\\Program\\Admin.accdb;Persist Security Info=False;", true)
 
-const getCustomer = async (req, res) => {
-    const customerId = req.query.customer
-    try {
-        const users = await connection.query(`SELECT * from Customer WHERE ID=${customerId}`)
-        return res.send(users)
-    } catch (error) {
-        console.error(error)
-    }
-}
+// const getCustomer = async (req, res) => {
+//     const customerId = req.query.customer
+//     try {
+//         const users = await connection.query(`SELECT * from Customer WHERE ID=${customerId}`)
+//         return res.send(users)
+//     } catch (error) {
+//         console.error(error)
+//     }
+// }
 
 // const getPurchaseInfo = async (req, res) => {
 //     const customerId = req.query.customer
@@ -99,9 +99,9 @@ const getAllClients = async (req, res) => {
 }
 
 
-app.get('/customer', getCustomer)
-app.get('/purchase', getPurchaseInfo)
-app.get('/getalltray', getTrayData)
+// app.get('/customer', getCustomer)
+// app.get('/purchase', getPurchaseInfo)
+// app.get('/getalltray', getTrayData)
 app.get('/getallclients', getAllClients)
 app.post('/settray', setTrayData)
 
