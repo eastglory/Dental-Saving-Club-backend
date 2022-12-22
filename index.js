@@ -41,16 +41,26 @@ const getTrayData = async (req, res) => {
     let data = [] ;
     await readXlsxFile('files/repairtray.xlsx').then((rows) => {
         rows.forEach((row, index) => {
-            if(typeof row[1] == "number") data.push({
-                tray: row[1],
-                client: row[2]?row[2]:"",
-                recId: row[3],
-                notes: row[4]?row[4]:"",
-                receptionDate: row[5]?row[5].replace(/(..)\-(..)\-(....)/, "$2-$1-$3"):"",
-                location: String(row[6]).toUpperCase(),
-                status: String(row[7]).trim().toUpperCase(),
-                followUp: row[8]?row[8]:""
-            })
+            if(typeof row[1] == "number") {
+                const tray = row[1]?row[1]:""
+                const client = row[2]?row[2]:""
+                const notes = row[4]?row[4]:""
+                const receptionDate = row[5]?row[5].replace(/(..)\-(..)\-(....)/, "$2-$1-$3"):""
+                const recId = receptionDate + tray
+                const location = String(row[6]).toUpperCase()
+                const status = String(row[7]).trim().toUpperCase()
+                const followUp = row[8]?row[8]:""
+                    data.push({
+                        tray,
+                        client,
+                        notes,
+                        recId,
+                        receptionDate,
+                        location,
+                        status,
+                        followUp
+                })
+            }
         })
     })
     return res.send(data)
