@@ -75,7 +75,7 @@ const setTrayData = async (req, res) => {
             ws.cell(`C${tray+3}`).value(client);
             ws.cell(`D${tray+3}`).value(recId);
             ws.cell(`E${tray+3}`).value(notes);
-            ws.cell(`F${tray+3}`).value(receptionDate);
+            ws.cell(`F${tray+3}`).value(receptionDate.replace(/(..)\-(..)\-(....)/, "$2-$1-$3"));
             ws.cell(`G${tray+3}`).value(location);
             ws.cell(`H${tray+3}`).value(status);
             ws.cell(`I${tray+3}`).value(followUp);
