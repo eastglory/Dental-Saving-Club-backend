@@ -46,7 +46,7 @@ const getTrayData = async (req, res) => {
                 const client = row[2]?row[2]:""
                 const notes = row[4]?row[4]:""
                 const receptionDate = row[5]?row[5].replace(/(..)\-(..)\-(....)/, "$2-$1-$3"):""
-                const recId = receptionDate + tray
+                const recId = receptionDate.replace(/(..)\-(..)\-(....)/, "$2-$1-$3") + tray
                 const location = String(row[6]).toUpperCase()
                 const status = String(row[7]).trim().toUpperCase()
                 const followUp = row[8]?row[8]:""
