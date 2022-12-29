@@ -16,8 +16,6 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 let con = mysql.createPool({
-    connectionLimit: 10,
-    acquireTimeout: 10000,
     host: "bvqj0bxlolitaru3lp3u-mysql.services.clever-cloud.com",
     user: "uni3mzp1n8uqnxfx",
     password: "qQYf148dBmURzPpQZgy6",
@@ -102,16 +100,16 @@ const setTrayData = async (req, res) => {
 const setRepairLog = async (req, res) => {
     const data = req.body
     console.log(req.body)
-    const dataSql = "INSERT INTO repairauthdata (tray, receivedOn, customer, quoteOn, quotevia, followOn, followVia, status, asOf, reportedBy, instruction, comment, signature, signDate, servicedBy, servicedDate) VALUES ?"
+    const dataSql = "INSERT INTO repairauthdata (recId, quoteOn, quotevia, followOn, followVia, status, asOf, reportedBy, instruction, comment, signature, signDate, servicedBy, servicedDate) VALUES ?"
     const dataValue = Object.values(data)
-    dataValue.splice(12,1)
-    const detailSql = "INSERT INTO repairauthdetail (authId, description, serial, invoice, dop, warranty, cost, authorised) VALUES ?"
+    dataValue.splice(10,1)
+    const detailSql = "INSERT INTO repairauthdetail (recId, description, serial, invoice, dop, warranty, cost, authorised) VALUES ?"
     
     con.query(dataSql, [[dataValue]], (err, result) => {  
         if (err) throw err
         const detailValue = data.tableData.map(item => {
             const arr = Object.values(item)
-            arr.unshift(result.insertId)
+            arr.unshift(data.recId)
             return arr
         })
         console.log(detailValue)
@@ -122,6 +120,29 @@ const setRepairLog = async (req, res) => {
     })
     
 }
+
+const setRepairJournal = async (req, res) => {
+    const data = req.body
+    console.log(req.body)
+    const sql = "INSERT INTO repairjournal (datRec, datHan, datRep, person, client, invoice, serial, product, warranty, subject, failurDesc, malfunctioned, defect, comment, check1, check2, check3, check4, check5, bearing, chuck, waterblockage, lubrification, feasability) VALUES ?"
+    const value = Object.values(data)
+    
+    con.query(sql, [[value]], (err, result) => {  
+        if (err) throw err
+            return res.send(result)
+        })
+    
+}
+
+const getSerialsFromRecId = async (req, res) => {
+    const recId = req.query.recId
+    sql = `SELECT * FROM repairauthdetail WHERE recId = '${recId}'`
+    con.query(sql, (err, result) => {
+        if(err) throw err
+        return res.send(result)
+    })
+}
+
 
 
 const getAllClients = async (req, res) => {
@@ -149,7 +170,9 @@ const getAllClients = async (req, res) => {
 // app.get('/purchase', getPurchaseInfo)
 app.get('/getalltray', getTrayData)
 app.get('/getallclients', getAllClients)
+app.get('/getserialsfromrecid', getSerialsFromRecId)
 app.post('/settray', setTrayData)
 app.post('/setRepairLog', setRepairLog)
+app.post('/setRepairJournal', setRepairJournal)
 
 app.listen(port, () => console.log(`Hello world app listening on port ${port}!`))
