@@ -4,6 +4,7 @@ const cors = require('cors')
 // const adodb = require('node-adodb')
 const readXlsxFile = require('read-excel-file/node')
 const XlsxPopulate = require('xlsx-populate')
+const mysql = require('mysql')
 
 const app = express()
 const port = 4000;
@@ -13,6 +14,19 @@ app.use(cors())
 // Configuring body parser middleware
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+
+let con = mysql.createPool({
+    connectionLimit: 10,
+    acquireTimeout: 10000,
+    host: "bvqj0bxlolitaru3lp3u-mysql.services.clever-cloud.com",
+    user: "uni3mzp1n8uqnxfx",
+    password: "qQYf148dBmURzPpQZgy6",
+    database: "bvqj0bxlolitaru3lp3u"
+})
+
+// con.connect(err => {
+//     if (err) throw err
+// })
 
 //configuring database connection
 // const connection = adodb.open("Provider=Microsoft.ACE.OLEDB.12.0; Data Source=C:\\\DSC\\Program\\Admin.accdb;Persist Security Info=False;", true)
@@ -83,7 +97,29 @@ const setTrayData = async (req, res) => {
         })
 
     return getTrayData(req, res)
+}
+
+const setRepairLog = async (req, res) => {
+    const data = req.body
+    console.log(req.body)
+    const dataSql = "INSERT INTO repairauthdata (tray, receivedOn, customer, quoteOn, quotevia, followOn, followVia, status, asOf, reportedBy, instruction, comment, signature, signDate, servicedBy, servicedDate) VALUES ?"
+    const dataValue = Object.values(data)
+    dataValue.splice(12,1)
+    const detailSql = "INSERT INTO repairauthdetail (authId, description, serial, invoice, dop, warranty, cost, authorised) VALUES ?"
     
+    con.query(dataSql, [[dataValue]], (err, result) => {  
+        if (err) throw err
+        const detailValue = data.tableData.map(item => {
+            const arr = Object.values(item)
+            arr.unshift(result.insertId)
+            return arr
+        })
+        console.log(detailValue)
+        con.query(detailSql, [detailValue], (err, result) => {
+            if (err) throw err
+            return res.send(result)
+        })
+    })
     
 }
 
@@ -114,5 +150,6 @@ const getAllClients = async (req, res) => {
 app.get('/getalltray', getTrayData)
 app.get('/getallclients', getAllClients)
 app.post('/settray', setTrayData)
+app.post('/setRepairLog', setRepairLog)
 
 app.listen(port, () => console.log(`Hello world app listening on port ${port}!`))
