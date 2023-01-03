@@ -22,6 +22,9 @@ let con = mysql.createPool({
     database: "bvqj0bxlolitaru3lp3u"
 })
 
+const formatDate = (date) => {
+    return new Date(date).toISOString().split('T')[0]
+}
 // con.connect(err => {
 //     if (err) throw err
 // })
@@ -123,15 +126,34 @@ const setRepairLog = async (req, res) => {
 
 const setRepairJournal = async (req, res) => {
     const data = req.body
-    console.log(req.body)
-    const sql = "INSERT INTO repairjournal (datRec, datHan, datRep, person, client, invoice, serial, product, warranty, subject, failurDesc, malfunctioned, defect, comment, check1, check2, check3, check4, check5, bearing, chuck, waterblockage, lubrification, feasability) VALUES ?"
+    const sql = "INSERT INTO repairjournal (datRec, datHan, datRep, person, client, invoice, serial, product, warranty, subject, failurDesc, malfunctioned, defect, comment, check1, check2, check3, check4, check5, bearing, chuck, waterblockage, lubrification, feasability, images) VALUES ?"
     const value = Object.values(data)
     
     con.query(sql, [[value]], (err, result) => {  
         if (err) throw err
             return res.send(result)
         })
-    
+}
+
+const getServiceData = async (req, res) => {
+    const client = req.query.client
+    sql = `SELECT * FROM repairjournal WHERE client = '${client}'`
+    con.query(sql, (err, result) => {
+        if(err) throw err
+        let data = []
+        result.forEach(item => {
+            data.push({
+                id: item.id,
+                receivedOn: formatDate(item.datRec),
+                handledOn: formatDate(item.datHan),
+                reportedOn: formatDate(item.datRep),
+                invoice: item.invoice,
+                serial: item.serial,
+                product: item.product
+            })
+        })
+        return res.send(data)
+    })
 }
 
 const getSerialsFromRecId = async (req, res) => {
@@ -171,6 +193,7 @@ const getAllClients = async (req, res) => {
 app.get('/getalltray', getTrayData)
 app.get('/getallclients', getAllClients)
 app.get('/getserialsfromrecid', getSerialsFromRecId)
+app.get('/getservicedata', getServiceData)
 app.post('/settray', setTrayData)
 app.post('/setRepairLog', setRepairLog)
 app.post('/setRepairJournal', setRepairJournal)
