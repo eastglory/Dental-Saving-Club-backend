@@ -126,7 +126,7 @@ const setRepairLog = async (req, res) => {
 
 const setRepairJournal = async (req, res) => {
     const data = req.body
-    const sql = "INSERT INTO repairjournal (datRec, datHan, datRep, person, client, invoice, serial, product, warranty, subject, failurDesc, malfunctioned, defect, comment, check1, check2, check3, check4, check5, bearing, chuck, waterblockage, lubrification, feasability, images) VALUES ?"
+    const sql = "INSERT INTO repairjournal (recid, datRec, datHan, datRep, person, client, invoice, serial, product, warranty, subject, failurDesc, malfunctioned, defect, comment, check1, check2, check3, check4, check5, bearing, chuck, waterblockage, lubrification, feasability, images) VALUES ?"
     const value = Object.values(data)
     
     con.query(sql, [[value]], (err, result) => {  
@@ -140,19 +140,7 @@ const getServiceData = async (req, res) => {
     sql = `SELECT * FROM repairjournal WHERE client = '${client}'`
     con.query(sql, (err, result) => {
         if(err) throw err
-        let data = []
-        result.forEach(item => {
-            data.push({
-                id: item.id,
-                receivedOn: formatDate(item.datRec),
-                handledOn: formatDate(item.datHan),
-                reportedOn: formatDate(item.datRep),
-                invoice: item.invoice,
-                serial: item.serial,
-                product: item.product
-            })
-        })
-        return res.send(data)
+        return res.send(result)
     })
 }
 
