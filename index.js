@@ -126,7 +126,7 @@ const setRepairLog = async (req, res) => {
 
 const setRepairJournal = async (req, res) => {
     const data = req.body
-    const sql = "INSERT INTO repairjournal (recid, datRec, datHan, datRep, person, client, invoice, serial, product, warranty, subject, failurDesc, malfunctioned, defect, comment, check1, check2, check3, check4, check5, bearing, chuck, waterblockage, lubrification, feasability, images) VALUES ?"
+    const sql = "INSERT INTO repairjournal (recid, datRec, datHan, datRep, person, client, invoice, serial, product, warranty, subject, failurDesc, malfunctioned, defect, comment, check1, check2, check3, check4, check5, bearing, chuck, waterblockage, lubrification, feasability, resn, images) VALUES ?"
     const value = Object.values(data)
     
     con.query(sql, [[value]], (err, result) => {  
@@ -137,7 +137,7 @@ const setRepairJournal = async (req, res) => {
 
 const getServiceData = async (req, res) => {
     const client = req.query.client
-    sql = `SELECT * FROM repairjournal WHERE client = '${client}'`
+    const sql = `SELECT * FROM repairjournal WHERE client = '${client}'`
     con.query(sql, (err, result) => {
         if(err) throw err
         return res.send(result)
@@ -146,7 +146,15 @@ const getServiceData = async (req, res) => {
 
 const getSerialsFromRecId = async (req, res) => {
     const recId = req.query.recId
-    sql = `SELECT * FROM repairauthdetail WHERE recId = '${recId}'`
+    const sql = `SELECT * FROM repairauthdetail WHERE recId = '${recId}'`
+    con.query(sql, (err, result) => {
+        if(err) throw err
+        return res.send(result)
+    })
+}
+
+const getRepairTrackerData = async (req, res) => {
+    const sql = `SELECT client, product, serial, datRec, waterblockage, lubrification, bearing, chuck, feasability, resn, (SELECT dop FROM repairauthdetail WHERE repairauthdetail.serial = repairjournal.serial) AS dop FROM repairjournal`
     con.query(sql, (err, result) => {
         if(err) throw err
         return res.send(result)
@@ -182,6 +190,7 @@ app.get('/getalltray', getTrayData)
 app.get('/getallclients', getAllClients)
 app.get('/getserialsfromrecid', getSerialsFromRecId)
 app.get('/getservicedata', getServiceData)
+app.get('/getrepairtrackerdata', getRepairTrackerData)
 app.post('/settray', setTrayData)
 app.post('/setRepairLog', setRepairLog)
 app.post('/setRepairJournal', setRepairJournal)
