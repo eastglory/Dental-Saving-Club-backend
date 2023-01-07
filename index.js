@@ -23,7 +23,8 @@ let con = mysql.createPool({
 })
 
 const formatDate = (date) => {
-    return new Date(date).toISOString().split('T')[0]
+    if(date) return new Date(date).toISOString().split('T')[0]
+    else return ''
 }
 // con.connect(err => {
 //     if (err) throw err
@@ -161,6 +162,36 @@ const getRepairTrackerData = async (req, res) => {
     })
 }
 
+const getDashboardData = async (req, res) => {
+    const {products, year} = req.body
+
+    let authData 
+    let authSql = `SELECT * from repairauthdetail WHERE description IN (`
+    authSql += "\'" + products[0] + "\'"
+    products.forEach(product => {
+        authSql += "," + "\'" + product + "\'"
+    })
+    authSql += ")"
+
+    let trackerData
+    let trackerSql = `SELECT client, product, serial, datRec, waterblockage, lubrification, bearing, chuck, feasability, resn, (SELECT dop FROM repairauthdetail WHERE repairauthdetail.serial = repairjournal.serial) AS dop FROM repairjournal WHERE YEAR(datRec)=${year} AND product IN (`
+    trackerSql += "\'" + products[0] + "\'"
+    products.forEach(product => {
+        trackerSql += "," + "\'" + product + "\'"
+    })
+    trackerSql += ")"
+
+    con.query(authSql, (err, result) => {
+        if(err) throw err
+        authData = result.filter(item => parseInt(item.recId.split('-')[2].slice(0,4)) == year)
+        con.query(trackerSql, (err, resp) => {
+            if(err) throw err
+            return res.send({authData, trackerData: resp})
+    })
+    })
+
+}
+
 
 
 const getAllClients = async (req, res) => {
@@ -191,6 +222,7 @@ app.get('/getallclients', getAllClients)
 app.get('/getserialsfromrecid', getSerialsFromRecId)
 app.get('/getservicedata', getServiceData)
 app.get('/getrepairtrackerdata', getRepairTrackerData)
+app.post('/getdashboarddata', getDashboardData)
 app.post('/settray', setTrayData)
 app.post('/setRepairLog', setRepairLog)
 app.post('/setRepairJournal', setRepairJournal)
