@@ -174,7 +174,7 @@ const getDashboardData = async (req, res) => {
     authSql += ")"
 
     let trackerData
-    let trackerSql = `SELECT client, product, serial, datRec, waterblockage, lubrification, bearing, chuck, feasability, resn, (SELECT dop FROM repairauthdetail WHERE repairauthdetail.serial = repairjournal.serial) AS dop FROM repairjournal WHERE YEAR(datRec)=${year} AND product IN (`
+    let trackerSql = `SELECT *, (SELECT dop FROM repairauthdetail WHERE repairauthdetail.serial = repairjournal.serial) AS dop FROM repairjournal WHERE YEAR(datRec)=${year} AND product IN (`
     trackerSql += "\'" + products[0] + "\'"
     products.forEach(product => {
         trackerSql += "," + "\'" + product + "\'"
