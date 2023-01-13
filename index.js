@@ -155,7 +155,7 @@ const getSerialsFromRecId = async (req, res) => {
 }
 
 const getRepairTrackerData = async (req, res) => {
-    const sql = `SELECT client, product, serial, datRec, waterblockage, lubrification, bearing, chuck, feasability, resn, (SELECT dop FROM repairauthdetail WHERE repairauthdetail.serial = repairjournal.serial) AS dop FROM repairjournal`
+    const sql = `SELECT recId, client, product, serial, datRec, waterblockage, lubrification, bearing, chuck, feasability, resn, (SELECT dop FROM repairauthdetail WHERE repairauthdetail.serial = repairjournal.serial) AS dop FROM repairjournal`
     con.query(sql, (err, result) => {
         if(err) throw err
         return res.send(result)
